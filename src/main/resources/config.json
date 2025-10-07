@@ -1,7 +1,7 @@
 {
-  "programmersCount": 7,
-  "waitersCount": 2,
-  "totalSoupPortions": 10000,
+  "programmersCount": 100,
+  "waitersCount": 10,
+  "totalSoupPortions": 100000,
   "programmerTimeConfigProperties": {
     "discussMillisMin": 1,
     "discussMillisMax": 20,

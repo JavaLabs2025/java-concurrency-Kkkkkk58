@@ -18,7 +18,7 @@ public class LoggingDiningProgrammersResultPrinter implements DiningProgrammersR
     @Override
     public void print(DiningProgrammersResult result) {
         try {
-            var serializedResult = objectMapper.writeValueAsString(result);
+            var serializedResult = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(result);
             log.info("[RESULT] {}", serializedResult);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

@@ -30,7 +30,8 @@ public class DiningProgrammersProblem {
     public DiningProgrammersProblem(
             ExecutorService programmersPool,
             ExecutorService waitersPool,
-            DiningProgrammersConfigProperties configProperties, TimeWatch timeWatch
+            DiningProgrammersConfigProperties configProperties,
+            TimeWatch timeWatch
     ) {
         this.programmersPool = programmersPool;
         this.waitersPool = waitersPool;
@@ -92,14 +93,10 @@ public class DiningProgrammersProblem {
 
         try {
             while (!programmersPool.awaitTermination(DEFAULT_PROGRESS_INTERVAL_SECONDS, TimeUnit.SECONDS)) {
-                var elapsedSeconds = timeWatch.tick().getSeconds();
-                log.info(
-                        "[DiningProgrammersProblem] Currently running for {} seconds, available soup portions: {}," +
-                                " plates to refill: {}",
-                        elapsedSeconds,
-                        restaurant.getRemainingSoupPortions(),
-                        restaurant.getPlatesToRefillCount()
-                );
+                logProgress(restaurant);
+            }
+            while (!waitersPool.awaitTermination(DEFAULT_PROGRESS_INTERVAL_SECONDS, TimeUnit.SECONDS)) {
+                logProgress(restaurant);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -109,8 +106,33 @@ public class DiningProgrammersProblem {
         }
     }
 
-    private DiningProgrammersResult makeResults(DiningProgrammersActorsAndServices actors, Duration tick) {
-        return new DiningProgrammersResult();
+    private void logProgress(Restaurant restaurant) {
+        var elapsedSeconds = timeWatch.tick().getSeconds();
+        log.info(
+                "[DiningProgrammersProblem] Currently running for {} seconds, available soup portions: {}," +
+                        " plates to refill: {}",
+                elapsedSeconds,
+                restaurant.getRemainingSoupPortions(),
+                restaurant.getPlatesToRefillCount()
+        );
+    }
+
+    private DiningProgrammersResult makeResults(DiningProgrammersActorsAndServices actors, Duration totalDuration) {
+        List<Integer> programmersPortions = actors.programmers.stream()
+                .map(Programmer::getConsumedSoupPortions)
+                .toList();
+        int restaurantPortionsLeft = actors.restaurant.getRemainingSoupPortions();
+
+        var statistics = programmersPortions.stream().mapToDouble(it -> it).summaryStatistics();
+
+        return new DiningProgrammersResult(
+                restaurantPortionsLeft,
+                Double.valueOf(statistics.getSum()).intValue(),
+                Double.valueOf(statistics.getMin()).intValue(),
+                Double.valueOf(statistics.getMax()).intValue(),
+                statistics.getAverage(),
+                totalDuration.toMillis()
+        );
     }
 
     private record DiningProgrammersActorsAndServices(

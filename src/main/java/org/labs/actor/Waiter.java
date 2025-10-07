@@ -23,10 +23,6 @@ public class Waiter implements Runnable {
         this.customerProvider = customerProvider;
     }
 
-    public int getPlatesServed() {
-        return platesServed;
-    }
-
     @Override
     public void run() {
         try {

@@ -41,10 +41,6 @@ public class Programmer implements Runnable {
         this.foodProvider = foodProvider;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public int getConsumedSoupPortions() {
         return consumedSoupPortions;
     }

@@ -13,7 +13,7 @@ public class JsonDiningProgrammersConfigReaderTest {
     private final DiningProgrammersConfigReader reader = new JsonDiningProgrammersConfigReader(objectMapper);
 
     @Test
-    void readConfigHappyPath() {
+    void readConfig_happyPath() {
         var actualProperties = reader.read("config.json");
 
         var expectedProperties = new DiningProgrammersConfigProperties(
